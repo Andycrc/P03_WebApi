@@ -20,15 +20,28 @@ namespace P03_WebApi.Controllers
         [Route("GetAll")]
         public ActionResult Get()
         {
-            List<reservas> listadoEquipo = (from e in _equiposContexto.reservas
-                                            select e).ToList();
+            var listadoReserva = (from reserva in _equiposContexto.reservas
+                                  join equipo in _equiposContexto.equipos on reserva.equipo_id equals equipo.id_equipos
+                                  join estado in _equiposContexto.estados_reserva on reserva.reserva_id equals estado.estado_res_id
+                                  join usuario in _equiposContexto.usuarios on reserva.usuario_id equals usuario.usuario_id
+                                  select new
+                                  {
+                                      nombreEquipo = equipo.nombre,
+                                      nombreUsuario = usuario.nombre,
+                                      reserva.fecha_salida,
+                                      reserva.hora_salida,
+                                      reserva.tiempo_reserva,
+                                      estado.estado,
+                                      reserva.fecha_retorno,
+                                      reserva.hora_retorno
+                                  }).ToList();
 
-            if (listadoEquipo.Count == 0)
+            if (listadoReserva.Count == 0)
             {
                 return NotFound();
             }
 
-            return Ok(listadoEquipo);
+            return Ok(listadoReserva);
         }
 
         //agregar

@@ -20,15 +20,19 @@ namespace P03_WebApi.Controllers
         [Route("GetAll")]
         public ActionResult Get()
         {
-            List<carreras> listadoEquipo = (from e in _equiposContexto.carreras
-                                            select e).ToList();
+            var listadoCarreras = (from carreara in _equiposContexto.carreras 
+                                   join facultad in _equiposContexto.facultades on carreara.facultad_id equals facultad.facultad_id
+                                   select new { 
+                                        carreara.nombre_carrera,
+                                        facultad.nombre_facultad
+                                   }).ToList();
 
-            if (listadoEquipo.Count == 0)
+            if (listadoCarreras.Count == 0)
             {
                 return NotFound();
             }
 
-            return Ok(listadoEquipo);
+            return Ok(listadoCarreras);
         }
 
         //agregar
